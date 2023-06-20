@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
-#include <ctime>
 #include <random>
 
 int size = 0;
