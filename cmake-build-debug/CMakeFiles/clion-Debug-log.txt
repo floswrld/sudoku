@@ -1,4 +1,16 @@
-/opt/jetbrains/apps/CLion/ch-0/231.9011.31/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/jetbrains/apps/CLion/ch-0/231.9011.31/bin/ninja/linux/x64/ninja -G Ninja -S /tank/home/21bade1bif/SudokuAbgabe -B /tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug
+/opt/jetbrains/apps/CLion/ch-0/231.9011.31/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/jetbrains/apps/CLion/ch-0/231.9011.31/bin/ninja/linux/x64/ninja -G Ninja -S /tank/home/21bade1bif/sudoku -B /tank/home/21bade1bif/sudoku/cmake-build-debug
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug
+-- Build files have been written to: /tank/home/21bade1bif/sudoku/cmake-build-debug

@@ -1,4 +1,4 @@
-# Install script for directory: /tank/home/21bade1bif/SudokuAbgabe
+# Install script for directory: /tank/home/21bade1bif/sudoku
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/tank/home/21bade1bif/sudoku/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

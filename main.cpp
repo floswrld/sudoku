@@ -40,16 +40,6 @@ int** makeSudoku(int pSize){
 
 
     sudoku=makeDiagonal(sudoku);
-    /*sudoku[0][4]=4;
-    sudoku[0][5]=7;
-    sudoku[1][3]=3;
-    sudoku[1][4]=2;
-    sudoku[1][5]=1;
-    sudoku[2][3]=8;
-    sudoku[2][4]=9;
-    sudoku[2][5]=5;*/
-
-
 
     //makeBorder(sudoku);
     std::vector<int> borderOptions = getBorderOptions(0, 3, sudoku);
