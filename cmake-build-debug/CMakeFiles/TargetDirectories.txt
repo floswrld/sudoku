@@ -1,0 +1,3 @@
+/tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug/CMakeFiles/SudokuAbgabe.dir
+/tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug/CMakeFiles/edit_cache.dir
+/tank/home/21bade1bif/SudokuAbgabe/cmake-build-debug/CMakeFiles/rebuild_cache.dir
