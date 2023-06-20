@@ -81,17 +81,17 @@ int** makeDiagonal(int** sudoku){
  * YET TO IMPLEMENT
  */
 int** makeBorder(int** sudoku){
-    int*** boarderArray=new int**[size];
+    int*** borderArray=new int**[size];
     for(int i = 0;i<size;i++){
-        boarderArray[i]=new int*[size];
+        borderArray[i]=new int*[size];
     }
     for(int i = 0; i<size;i++){
        for(int j = 0;j<size;j++){
-           boarderArray[i][j]=new int[size-minSize];
+           borderArray[i][j]=new int[size - minSize];
        }
     }
 
-    int* borderOptions;
+    std::vector<int> borderOptions;
     int bCounter=0;
     for(int i = 0; i<size;i++){
         for(int j=0;j<size;j++){
@@ -99,14 +99,20 @@ int** makeBorder(int** sudoku){
             if(i/minSize==minSize-1&&j/minSize==0
                 || j/minSize==minSize-1&&i/minSize==0)continue;
 
-            //borderOptions=getBorderOptions(i,j,sudoku);
+            /*
+            borderOptions=getBorderOptions(i,j,sudoku);
+            for(int k = 0; k < borderOptions.size(); k++){
+                std::cout << borderOptions[k] << " ";
+            }
+            std::cout << std::endl;*/
+
             if(sizeof(borderOptions)/ sizeof(int)!=0){
                 int ran=rand()%(sizeof(borderOptions)/sizeof(int));
                 sudoku[i][j]=borderOptions[ran];
                 borderOptions[ran]=0;
             }else{
-                //backtracking
-                sudoku[i][j]=69;
+                borderArray[i][j][0]= sudoku[i][j];
+
             }
 
 
