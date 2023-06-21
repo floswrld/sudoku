@@ -184,6 +184,72 @@ int getRandomInt(int vectorSize){
 }
 
 /*
+ * function to fill the missing corners
+ */
+int** makeCorners(int** sudoku){
+    for(int num = 1;num<=size;num++){
+        int x,y;
+        for(int i = 0;i<minSize;i++){
+            bool contains=false;
+            for(int j = 0;j<size-minSize;j++){
+                if(sudoku[i][j]==num){
+                    contains=true;
+                    break;
+                }
+            }
+            if(contains==false){
+                x=i;
+                break;
+            }
+        }
+        for(int i = 0;i<3;i++){
+            bool contains=false;
+            for(int j = 0;j<size-minSize;j++){
+                if(sudoku[j][i]==num){
+                    contains=true;
+                    break;
+                }
+            }
+            if(contains==false){
+                y=i;
+                break;
+            }
+        }
+        sudoku[x][y]=num;
+    }
+    for(int num = 1;num<=size;num++){
+        int x,y;
+        for(int i = size-minSize;i<size;i++){
+            bool contains=false;
+            for(int j = 0;j<size-minSize;j++){
+                if(sudoku[j][i]==num){
+                    contains=true;
+                    break;
+                }
+            }
+            if(contains==false){
+                x=i;
+                break;
+            }
+        }
+        for(int i = 0;i<3;i++){
+            bool contains=false;
+            for(int j = 0;j<size-minSize;j++){
+                if(sudoku[j][i]==num){
+                    contains=true;
+                    break;
+                }
+            }
+            if(contains==false){
+                y=i;
+                break;
+            }
+        }
+        sudoku[x][y]=num;
+    }
+}
+
+/*
  * Method to print Sudoku grid onto the console
  */
 void sudokuOut(int** sudoku){

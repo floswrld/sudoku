@@ -14,5 +14,6 @@ std::vector<int> getBorderOptions(int row,int col,int** sudoku);
 bool contains(std::vector<int> array,int test);
 int getRandomInt(int vectorSize);
 void sudokuOut(int** sudoku);
+int** makeCorners(int** sudoku);
 
 #endif //SUDOKUABGABE_MAIN_H
