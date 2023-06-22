@@ -9,7 +9,7 @@ int size = 0;
 int minSize = 0;
 
 int main() {
-    int **sudoku = makeSudoku(9);
+    int **sudoku = makeSudoku(25);
     sudokuOut(sudoku);
 
     // Deallocate memory for the 2D array
@@ -36,11 +36,12 @@ int **makeSudoku(int pSize) {
             sudoku[j][k] = 0;
         }
     }
+    sudoku=makeDiagonal(sudoku);
 
-    sudoku = fillManually9(sudoku);
-    sudoku = makeCorners(sudoku);
+    //sudoku = fillManually16(sudoku);
+    //sudoku = makeCorners(sudoku);
 
-    //sudoku=makeDiagonal(sudoku);
+
     /*
 
     makeBorder(sudoku);
@@ -595,15 +596,17 @@ int **fillManually16(int **sudoku) {
 void sudokuOut(int **sudoku) {
     for (int i = 0; i < size; i++) {
         if (i % (int) sqrt(size) == 0 && i != 0) {
-
-            std::cout << "----------+-----------+---------" << std::endl;
+            if(size==9)std::cout << "----------+-----------+---------" << std::endl;
+            else if(size==16)std::cout << "-----------------+------------------+------------------+-----------------" << std::endl;
+            else std::cout << "---------------------+----------------------+----------------------+----------------------+----------------------" << std::endl;
         }
         for (int j = 0; j < size; j++) {
             if (j % (int) sqrt(size) == 0 && j != 0) {
 
                 std::cout << " | ";
             }
-            std::cout << " " << sudoku[i][j] << " ";
+            if(sudoku[i][j]<10)std::cout << "  " << sudoku[i][j] << " ";
+            else std::cout << " " << sudoku[i][j] << " ";
 
 
         }
