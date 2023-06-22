@@ -15,5 +15,7 @@ bool contains(std::vector<int> array,int test);
 int getRandomInt(int vectorSize);
 void sudokuOut(int** sudoku);
 int** makeCorners(int** sudoku);
+int** fillManually9(int** sudoku);
+int** fillManually16(int** sudoku);
 
 #endif //SUDOKUABGABE_MAIN_H
