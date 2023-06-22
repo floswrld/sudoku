@@ -164,31 +164,6 @@ std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
 }
 
 /*
- * Method to get a boolean depending on a comparison between array value and test-integer
- */
-bool contains(std::vector<int> array, int test) {
-    for (int i = 0; i < array.size(); i++) {
-        if (array.at(i) == test)return true;
-    }
-    return false;
-}
-
-/*
- * Method to generate random integer between 1 and size
- *
- * Ansatz fue True Random anhand von Hardware
- * (davor Problem immer selbes Sudoku)
- */
-int getRandomInt(int vectorSize) {
-    std::random_device rd;// Obtain a random seed from the hardware
-    std::default_random_engine engine(rd());
-    std::uniform_int_distribution<int> distribution(0, vectorSize - 1);
-    int randomInt = distribution(engine);
-
-    return randomInt;
-}
-
-/*
  * function to fill the missing corners
  */
 int **makeCorners(int **sudoku) {
@@ -258,6 +233,57 @@ int **makeCorners(int **sudoku) {
         sudoku[y][x] = num;
     }
     return sudoku;
+}
+
+/*
+ * Method to get a boolean depending on a comparison between array value and test-integer
+ */
+bool contains(std::vector<int> array, int test) {
+    for (int i = 0; i < array.size(); i++) {
+        if (array.at(i) == test)return true;
+    }
+    return false;
+}
+
+/*
+ * Method to generate random integer between 1 and size
+ *
+ * Ansatz fue True Random anhand von Hardware
+ * (davor Problem immer selbes Sudoku)
+ */
+int getRandomInt(int vectorSize) {
+    std::random_device rd;// Obtain a random seed from the hardware
+    std::default_random_engine engine(rd());
+    std::uniform_int_distribution<int> distribution(0, vectorSize - 1);
+    int randomInt = distribution(engine);
+
+    return randomInt;
+}
+
+/*
+ * Method to print Sudoku grid onto the console
+ */
+void sudokuOut(int **sudoku) {
+    for (int i = 0; i < size; i++) {
+        if (i % (int) sqrt(size) == 0 && i != 0) {
+            if(size==9)std::cout << "----------+-----------+---------" << std::endl;
+            else if(size==16)std::cout << "-----------------+------------------+------------------+-----------------" << std::endl;
+            else std::cout << "---------------------+----------------------+----------------------+----------------------+----------------------" << std::endl;
+        }
+        for (int j = 0; j < size; j++) {
+            if (j % (int) sqrt(size) == 0 && j != 0) {
+
+                std::cout << " | ";
+            }
+            if(sudoku[i][j]<10)std::cout << "  " << sudoku[i][j] << " ";
+            else std::cout << " " << sudoku[i][j] << " ";
+
+
+        }
+
+        std::cout << std::endl;
+
+    }
 }
 
 /**
@@ -588,30 +614,4 @@ int **fillManually16(int **sudoku) {
     sudoku[15][14]=8;
     sudoku[15][15]=12;
     return sudoku;
-}
-
-/*
- * Method to print Sudoku grid onto the console
- */
-void sudokuOut(int **sudoku) {
-    for (int i = 0; i < size; i++) {
-        if (i % (int) sqrt(size) == 0 && i != 0) {
-            if(size==9)std::cout << "----------+-----------+---------" << std::endl;
-            else if(size==16)std::cout << "-----------------+------------------+------------------+-----------------" << std::endl;
-            else std::cout << "---------------------+----------------------+----------------------+----------------------+----------------------" << std::endl;
-        }
-        for (int j = 0; j < size; j++) {
-            if (j % (int) sqrt(size) == 0 && j != 0) {
-
-                std::cout << " | ";
-            }
-            if(sudoku[i][j]<10)std::cout << "  " << sudoku[i][j] << " ";
-            else std::cout << " " << sudoku[i][j] << " ";
-
-
-        }
-
-        std::cout << std::endl;
-
-    }
 }
