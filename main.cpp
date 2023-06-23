@@ -9,7 +9,7 @@ int size = 0;
 int minSize = 0;
 
 int main() {
-    int **sudoku = makeSudoku(25);
+    int **sudoku = makeSudoku(9);
     sudokuOut(sudoku);
 
     // Deallocate memory for the 2D array
@@ -17,6 +17,7 @@ int main() {
         delete[] sudoku[i];
     }
     delete sudoku;
+
     return 0;
 }
 
@@ -38,23 +39,35 @@ int **makeSudoku(int pSize) {
     }
     sudoku=makeDiagonal(sudoku);
 
-    //sudoku = fillManually16(sudoku);
+    sudoku = makeBorder(sudoku);
+
+    //sudoku = fillManually9(sudoku);
     //sudoku = makeCorners(sudoku);
 
+    //testBorderOptions(sudoku);
 
-    /*
-
-    makeBorder(sudoku);
+    return sudoku;
+}
+void testBorderOptions(int** sudoku){
+    //Test the getBorderOptions
     std::vector<int> borderOptions = getBorderOptions(0, 3, sudoku);
     for(int i = 0;i<borderOptions.size();i++){
-        std::cout<<borderOptions.at(i)<<std::endl;
+        std::cout<<borderOptions.at(i)<<", ";
 
     }
-
     std::cout<<std::endl;
+    borderOptions = getBorderOptions(1, 3, sudoku);
+    for(int i = 0;i<borderOptions.size();i++){
+        std::cout<<borderOptions.at(i)<<", ";
 
-*/
-    return sudoku;
+    }
+    std::cout<<std::endl;
+    borderOptions = getBorderOptions(2, 3, sudoku);
+    for(int i = 0;i<borderOptions.size();i++){
+        std::cout<<borderOptions.at(i)<<", ";
+
+    }
+    std::cout<<std::endl;
 }
 
 
@@ -85,44 +98,83 @@ int **makeDiagonal(int **sudoku) {
  * YET TO IMPLEMENT
  */
 int **makeBorder(int **sudoku) {
-    int ***borderArray = new int **[size];
-    for (int i = 0; i < size; i++) {
-        borderArray[i] = new int *[size];
-    }
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            borderArray[i][j] = new int[size - minSize];
-        }
-    }
+    std::vector<std::vector<int>> borderArray((size-2-minSize)*size);
 
     std::vector<int> borderOptions;
     int bCounter = 0;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
+            //Exclude the diagonal and the corners
             if (i / minSize == j / minSize)continue;
             if (i / minSize == minSize - 1 && j / minSize == 0
                 || j / minSize == minSize - 1 && i / minSize == 0)
                 continue;
 
-            /*
             borderOptions=getBorderOptions(i,j,sudoku);
-            for(int k = 0; k < borderOptions.size(); k++){
-                std::cout << borderOptions[k] << " ";
-            }
-            std::cout << std::endl;*/
 
-            if (sizeof(borderOptions) / sizeof(int) != 0) {
-                int ran = rand() % (sizeof(borderOptions) / sizeof(int));
-                sudoku[i][j] = borderOptions[ran];
-                borderOptions[ran] = 0;
+            if (borderOptions.size() != 0) {
+                int ran = getRandomInt(borderOptions.size());
+                sudoku[i][j] = borderOptions.at(ran);
+                borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                bCounter++;
             } else {
-                borderArray[i][j][0] = sudoku[i][j];
-
+                while (i>=0&&j>=0){
+                    if(i/minSize==minSize-1){
+                        if(j==minSize&&i==size-minSize){
+                            j=size-1;
+                            i--;
+                        }else if(j==minSize){
+                            j=size-minSize-1;
+                            i--;
+                        }else{
+                            j--;
+                        }
+                    }else if(i/minSize==0){
+                        if(i==0&&j==minSize){
+                            printf("SOMETHING WENT WRONG");
+                        }else if(j==minSize){
+                            j=size-minSize-1;
+                            i--;
+                        } else{
+                            j--;
+                        }
+                    } else{
+                        int col = i/minSize;
+                        if(j==0&&i==col*minSize){
+                            j=size-minSize-1;
+                            i--;
+                        }else if(j==0){
+                            j=size-1;
+                            i--;
+                        }else if(j==col*minSize+minSize){
+                            j=j-minSize-1;
+                        }else{
+                            j--;
+                        }
+                    }
+                    bCounter--;
+                    sudoku[i][j]=0;
+                    borderOptions=getBorderOptions(i,j,sudoku);
+                    borderOptions= vectorXwithoutVectorY(borderOptions,borderArray[bCounter]);
+                    if(borderOptions.size()!=0){
+                        int ran = getRandomInt(borderOptions.size());
+                        sudoku[i][j] = borderOptions.at(ran);
+                        borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                        bCounter++;
+                        break;
+                    }
+                }
             }
-
-
         }
     }
+    /*for (int i = 0; i < (size-2-minSize)*size; i++) {
+        std::cout << "Vector " << i << ": ";
+        for (int j = 0; j < borderArray[i].size(); j++) {
+            std::cout << borderArray[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }*/
+    return sudoku;
 }
 
 /*
@@ -132,13 +184,13 @@ std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
     std::vector<int> restrictions;
     //adds the already used numbers from the row to the restrictions array
     for (int i = 0; i < size; i++) {
-        if (!contains(restrictions, sudoku[row][i]) && sudoku[row][i] != 0) {
+        if (contains(restrictions, sudoku[row][i])==-1 && sudoku[row][i] != 0) {
             restrictions.insert(restrictions.end(), sudoku[row][i]);
         }
     }
     //adds the already used numbers from the col to the restrictions array
     for (int i = 0; i < size; i++) {
-        if (!contains(restrictions, sudoku[i][col]) && sudoku[i][col] != 0) {
+        if (contains(restrictions, sudoku[i][col])==-1 && sudoku[i][col] != 0) {
             restrictions.insert(restrictions.cend(), sudoku[i][col]);
         }
     }
@@ -148,7 +200,7 @@ std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
 
     for (int i = 0 + minSize * blockRow; i < minSize + minSize * blockRow; i++) {
         for (int j = 0 + minSize * blockCol; j < minSize + minSize * blockCol; j++) {
-            if (!contains(restrictions, sudoku[i][j]) && sudoku[i][j] != 0) {
+            if (contains(restrictions, sudoku[i][j])==-1 && sudoku[i][j] != 0) {
                 restrictions.insert(restrictions.end(), sudoku[i][j]);
             }
         }
@@ -156,12 +208,14 @@ std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
 
     std::vector<int> allowed;
     for (int i = 1; i <= size; i++) {
-        if (!contains(restrictions, i)) {
+        if (contains(restrictions, i)==-1) {
             allowed.insert(allowed.end(), i);
         }
     }
     return allowed;
 }
+
+
 
 /*
  * function to fill the missing corners
@@ -237,12 +291,26 @@ int **makeCorners(int **sudoku) {
 
 /*
  * Method to get a boolean depending on a comparison between array value and test-integer
+ * returns the position and -1 if not found
  */
-bool contains(std::vector<int> array, int test) {
+int contains(std::vector<int> array, int test) {
     for (int i = 0; i < array.size(); i++) {
-        if (array.at(i) == test)return true;
+        if (array.at(i) == test)return i;
     }
-    return false;
+    return -1;
+}
+
+/*
+ * Returns a vector which consists only of the elements which aren't in y
+ */
+std::vector<int> vectorXwithoutVectorY(std::vector<int> x, std::vector<int> y){
+    for(int i = 0;i<y.size();i++){
+        int c = contains(x,y.at(i));
+        if(c!=-1){
+            x.erase(x.begin()+c);
+        }
+    }
+    return x;
 }
 
 /*
@@ -266,7 +334,7 @@ int getRandomInt(int vectorSize) {
 void sudokuOut(int **sudoku) {
     for (int i = 0; i < size; i++) {
         if (i % (int) sqrt(size) == 0 && i != 0) {
-            if(size==9)std::cout << "----------+-----------+---------" << std::endl;
+            if(size==9)std::cout << "-------------+--------------+------------" << std::endl;
             else if(size==16)std::cout << "-----------------+------------------+------------------+-----------------" << std::endl;
             else std::cout << "---------------------+----------------------+----------------------+----------------------+----------------------" << std::endl;
         }
