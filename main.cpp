@@ -64,76 +64,94 @@ int **makeDiagonal(int **sudoku) {
     return sudoku;
 }
 
-/*
- * Method to fill upper-mid, mid-left, mid-right and mid-lower box with random integers, without duplicates
- * within the box, row and column
- *
- * YET TO IMPLEMENT
- */
+
+
 int **makeBorder(int **sudoku) {
     std::vector<std::vector<int>> borderArray((size*size)-minSize);
 
     std::vector<int> borderOptions;
     int bCounter=0;
-    int boxI=0;
+    int boxI=1;
     int boxJ=0;
-    while(!(boxI==minSize-1&&boxJ==minSize-1)) {
-        for (int i = 0; i < minSize; i++) {
-            if(boxI==boxJ)break;
-            for (int j = 0; j < minSize; j++) {
-                int iT =  i+ boxI * minSize;
-                int jT = j + boxJ * minSize;
-                borderOptions=getBorderOptions(iT,jT,sudoku);
+    bool locIndex=true;
+    int count = 1;
+    while(true){
+        while(boxI<minSize&&boxJ<minSize){
 
-                if (borderOptions.size() != 0) {
-                    int ran = getRandomInt(borderOptions.size());
-                    sudoku[iT][jT] = borderOptions.at(ran);
-                    borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
-                    bCounter++;
-                } else {
-                    while (boxI>=0 || boxJ>=0 || i>=0||j>=0){
-                        if(i==0&&j==0){
-                            if(boxJ==0){
-                                boxJ=minSize-1;
-                                boxI--;
-                                i=minSize-1;
+            for (int i = 0; i < minSize; i++) {
+                for (int j = 0; j < minSize; j++) {
+                    int iT =  i+ boxI * minSize;
+                    int jT = j + boxJ * minSize;
+                    borderOptions=getBorderOptions(iT,jT,sudoku);
+
+                    if (borderOptions.size() != 0) {
+                        int ran = getRandomInt(borderOptions.size());
+                        sudoku[iT][jT] = borderOptions.at(ran);
+                        borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                        bCounter++;
+                    } else {
+                        while (boxI>=0 || boxJ>=0 || i>=0||j>=0){
+                            if(i==0&&j==0){
+                                if(locIndex){
+                                    if(boxJ==0){
+                                        count--;
+                                        locIndex= false;
+                                        boxJ=minSize-1;
+                                        boxI=minSize-1-count;
+                                    }else{
+                                        boxJ--;
+                                        boxI--;
+                                    }
+                                }else{
+                                    if(boxI==0){
+                                        locIndex=true;
+                                        boxJ=minSize-1-count;
+                                        boxI=minSize-1;
+                                    } else{
+                                        boxJ--;
+                                        boxI--;
+                                    }
+                                }
                                 j=minSize-1;
-                            } else{
-                                boxJ--;
-                                while(boxJ==boxI)boxJ--;
                                 i=minSize-1;
+                            }else if(j==0){
+                                i--;
                                 j=minSize-1;
+                            }else{
+                                j--;
                             }
-                        }else if(j==0){
-                            i--;
-                            j=minSize-1;
-                        }else{
-                            j--;
+                            bCounter--;
+                            iT=i+boxI*minSize;
+                            jT=j+boxJ*minSize;
+                            sudoku[iT][jT]=0;
+                            borderOptions=getBorderOptions(iT,jT,sudoku);
+                            borderOptions= vectorXwithoutVectorY(borderOptions,borderArray[bCounter]);
+                            if(borderOptions.size()!=0){
+                                int ran = getRandomInt(borderOptions.size());
+                                sudoku[iT][jT] = borderOptions.at(ran);
+                                borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                                bCounter++;
+                                break;
+                            }
+                            borderArray[bCounter].clear();
                         }
-                        bCounter--;
-                        iT=i+boxI*minSize;
-                        jT=j+boxJ*minSize;
-                        sudoku[iT][jT]=0;
-                        borderOptions=getBorderOptions(iT,jT,sudoku);
-                        borderOptions= vectorXwithoutVectorY(borderOptions,borderArray[bCounter]);
-                        if(borderOptions.size()!=0){
-                            int ran = getRandomInt(borderOptions.size());
-                            sudoku[iT][jT] = borderOptions.at(ran);
-                            borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
-                            bCounter++;
-                            break;
-                        }
-                        borderArray[bCounter].clear();
                     }
                 }
             }
-        }
-        if(boxJ<minSize-1){
-            boxJ++;
-        }else{
-            boxJ=0;
             boxI++;
+            boxJ++;
         }
+        if(locIndex){
+            locIndex=false;
+            boxI=0;
+            boxJ=count;
+        } else{
+            count++;
+            locIndex=true;
+            boxI=count;
+            boxJ=0;
+        }
+        if(count==minSize)break;
     }
     return sudoku;
 }

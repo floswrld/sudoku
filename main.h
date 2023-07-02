@@ -16,5 +16,4 @@ std::vector<int> vectorXwithoutVectorY(std::vector<int> x, std::vector<int> y);
 int getRandomInt(int vectorSize);
 void sudokuOut(int** sudoku);
 
-
 #endif //SUDOKUABGABE_MAIN_H
