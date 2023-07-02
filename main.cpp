@@ -143,24 +143,27 @@ int **makeBorder(int **sudoku) {
  */
 std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
     std::vector<int> restrictions;
+    int boxRow,boxCol;
+    boxRow=row/minSize;
+    boxCol=col/minSize;
     //adds the already used numbers from the row to the restrictions array
     for (int i = 0; i < size; i++) {
+        if(i/minSize==boxRow)continue;
         if (contains(restrictions, sudoku[row][i])==-1 && sudoku[row][i] != 0) {
             restrictions.insert(restrictions.end(), sudoku[row][i]);
         }
     }
     //adds the already used numbers from the col to the restrictions array
     for (int i = 0; i < size; i++) {
+        if(i/minSize==boxCol)continue;
         if (contains(restrictions, sudoku[i][col])==-1 && sudoku[i][col] != 0) {
             restrictions.insert(restrictions.cend(), sudoku[i][col]);
         }
     }
     //adds the already used numbers of the same box to the restictions array
-    int blockRow = row / minSize;
-    int blockCol = col / minSize;
 
-    for (int i = 0 + minSize * blockRow; i < minSize + minSize * blockRow; i++) {
-        for (int j = 0 + minSize * blockCol; j < minSize + minSize * blockCol; j++) {
+    for (int i = 0 + minSize * boxRow; i < minSize + minSize * boxRow; i++) {
+        for (int j = 0 + minSize * boxCol; j < minSize + minSize * boxCol; j++) {
             if (contains(restrictions, sudoku[i][j])==-1 && sudoku[i][j] != 0) {
                 restrictions.insert(restrictions.end(), sudoku[i][j]);
             }
