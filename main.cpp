@@ -4,11 +4,21 @@
 #include <math.h>
 #include <vector>
 #include <random>
+#include <ctime>
 
 int size = 0;
 int minSize = 0;
 
 int main() {
+    // Get the current time
+    std::time_t currentTime = std::time(nullptr);
+
+    // Convert the time to a string format
+    char buffer[80];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime));
+
+    // Print the current time
+    std::cout << "Start time: " << buffer << std::endl;
     int **sudoku = makeSudoku(9);
     sudokuOut(sudoku);
 
@@ -17,6 +27,15 @@ int main() {
         delete[] sudoku[i];
     }
     delete sudoku;
+
+    // Get the current time
+    currentTime = std::time(nullptr);
+
+    // Convert the time to a string format
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime));
+
+    // Print the current time
+    std::cout << "End time: " << buffer << std::endl;
 
     return 0;
 }
