@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include <unordered_set>
 
 int size = 0;
 int minSize = 0;
@@ -12,7 +13,7 @@ int minSize = 0;
 
 int main() {
     timeOut("Start time:");
-    int **sudoku = makeSudoku(25);
+    int **sudoku = makeSudoku(16);
     sudokuOut(sudoku);
 
     // Deallocate memory for the 2D array
@@ -68,19 +69,21 @@ int **makeDiagonal(int **sudoku) {
 }
 
 int **makeBorder(int **sudoku) {
-    std::vector<std::vector<int>> borderArray((size*size)-minSize);
+    std::vector<std::unordered_set<int>> borderArray((size*size)-minSize);
 
     std::vector<int> borderOptions;
-    std::vector<int> restrictions;
+    borderOptions.reserve(size);
+    std::unordered_set<int> restrictions;
+    restrictions.reserve(size);
 
     int bCounter=0;
     int boxI=1;
     int boxJ=0;
     bool locIndex=true;
     int count = 1;
+    int temp=0;
     while(true){
         while(boxI<minSize&&boxJ<minSize){
-
             for (int i = 0; i < minSize; i++) {
                 for (int j = 0; j < minSize; j++) {
                     int iT =  i+ boxI * minSize;
@@ -88,11 +91,12 @@ int **makeBorder(int **sudoku) {
                     restrictions=getBorderRestrictions(iT, jT, sudoku);
                     borderOptions=getAllowed(restrictions);
 
-
                     if (borderOptions.size() != 0) {
                         int ran = getRandomInt(borderOptions.size());
-                        sudoku[iT][jT] = borderOptions.at(ran);
-                        borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                        temp=borderOptions.at(ran);
+                        sudoku[iT][jT] = temp;
+                        restrictions.insert(restrictions.end(),temp);
+                        borderArray[bCounter].insert(restrictions.begin(),restrictions.end());
                         bCounter++;
                     } else {
                         while (boxI>=0 || boxJ>=0 || i>=0||j>=0){
@@ -132,8 +136,9 @@ int **makeBorder(int **sudoku) {
                             borderOptions= getAllowed(borderArray[bCounter]);
                             if(borderOptions.size()!=0){
                                 int ran = getRandomInt(borderOptions.size());
-                                sudoku[iT][jT] = borderOptions.at(ran);
-                                borderArray[bCounter].insert(borderArray[bCounter].end(),borderOptions.at(ran));
+                                temp = borderOptions.at(ran);
+                                sudoku[iT][jT] = temp;
+                                borderArray[bCounter].insert(temp);
                                 bCounter++;
                                 break;
                             }
@@ -163,41 +168,34 @@ int **makeBorder(int **sudoku) {
 /*
  * Method to get possible integers for a slot in a border-box
  */
-std::vector<int> getBorderRestrictions(int row, int col, int **sudoku) {
-    std::vector<int> restrictions;
-    int boxRow,boxCol;
-    boxRow=row/minSize;
-    boxCol=col/minSize;
+std::unordered_set<int> getBorderRestrictions(int row, int col, int **sudoku) {
+    //std::cout<<"Row: "<<row<<" Col: "<<col<<std::endl;
+    std::unordered_set<int> restrictions;
+    restrictions.reserve(size);
+    int boxRow=row/minSize;
+    int boxCol=col/minSize;
     int temp;
     if(row>col){
         for(int i =boxRow*minSize-1;i>=0;i--){
             temp=sudoku[i][col];
             if(temp==0)break;
-            if(contains(restrictions,temp)==-1){
-                restrictions.insert(restrictions.end(),temp);
-            }
+            restrictions.insert(temp);
         }
         for(int i =boxCol*minSize+3;i<size;i++){
             temp=sudoku[row][i];
             if(temp==0)break;
-            if(contains(restrictions,temp)==-1){
-                restrictions.insert(restrictions.end(),temp);
-            }
+                restrictions.insert(temp);
         }
     }else{
         for(int i =boxRow*minSize+3;i<size;i++){
             temp=sudoku[i][col];
             if(temp==0)break;
-            if(contains(restrictions,temp)==-1){
-                restrictions.insert(restrictions.end(),temp);
-            }
+            restrictions.insert(temp);
         }
         for(int i =boxCol*minSize-1;i>=0;i--){
             temp=sudoku[row][i];
             if(temp==0)break;
-            if(contains(restrictions,temp)==-1){
-                restrictions.insert(restrictions.end(),temp);
-            }
+            restrictions.insert(temp);
         }
     }
     bool breakBool=false;
@@ -208,20 +206,19 @@ std::vector<int> getBorderRestrictions(int row, int col, int **sudoku) {
                 breakBool=true;
                 break;
             }
-            if (contains(restrictions, temp)==-1 ) {
-                restrictions.insert(restrictions.end(), temp);
-            }
+            restrictions.insert(temp);
         }
         if(breakBool)break;
     }
     return restrictions;
 }
 
-std::vector<int> getAllowed(std::vector<int> restrictions){
+std::vector<int> getAllowed(std::unordered_set<int> restrictions){
     std::vector<int> allowed;
+    allowed.reserve(size);
     for (int i = 1; i <= size; i++) {
-        if (contains(restrictions, i)==-1) {
-            allowed.insert(allowed.end(), i);
+        if (restrictions.find(i)==restrictions.end()) {
+            allowed.push_back(i);
         }
     }
     return allowed;
@@ -236,19 +233,6 @@ int contains(std::vector<int> array, int test) {
         if (array.at(i) == test)return i;
     }
     return -1;
-}
-
-/*
- * Returns a vector which consists only of the elements which aren't in y
- */
-std::vector<int> vectorXwithoutVectorY(std::vector<int> x, std::vector<int> y){
-    for(int i = 0;i<y.size();i++){
-        int c = contains(x,y.at(i));
-        if(c!=-1){
-            x.erase(x.begin()+c);
-        }
-    }
-    return x;
 }
 
 /*
