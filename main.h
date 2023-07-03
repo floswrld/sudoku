@@ -10,10 +10,11 @@
 int** makeSudoku(int size);
 int** makeDiagonal(int** sudoku);
 int** makeBorder(int** sudoku);
-std::vector<int> getBorderOptions(int row,int col,int** sudoku);
+std::vector<int> getBorderRestrictions(int row, int col, int** sudoku);
+std::vector<int> getAllowed(std::vector<int> restrictions);
 int contains(std::vector<int> array,int test);
-std::vector<int> vectorXwithoutVectorY(std::vector<int> x, std::vector<int> y);
 int getRandomInt(int vectorSize);
 void sudokuOut(int** sudoku);
+void timeOut(std::string message);
 
 #endif //SUDOKUABGABE_MAIN_H

@@ -9,17 +9,10 @@
 int size = 0;
 int minSize = 0;
 
+
 int main() {
-    // Get the current time
-    std::time_t currentTime = std::time(nullptr);
-
-    // Convert the time to a string format
-    char buffer[80];
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime));
-
-    // Print the current time
-    std::cout << "Start time: " << buffer << std::endl;
-    int **sudoku = makeSudoku(9);
+    timeOut("Start time:");
+    int **sudoku = makeSudoku(25);
     sudokuOut(sudoku);
 
     // Deallocate memory for the 2D array
@@ -27,19 +20,10 @@ int main() {
         delete[] sudoku[i];
     }
     delete sudoku;
-
-    // Get the current time
-    currentTime = std::time(nullptr);
-
-    // Convert the time to a string format
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime));
-
-    // Print the current time
-    std::cout << "End time: " << buffer << std::endl;
+    timeOut("End time: ");
 
     return 0;
 }
-
 /*
  * Method to generate a Sudoku grid with a random but possible solution
  */
@@ -83,12 +67,12 @@ int **makeDiagonal(int **sudoku) {
     return sudoku;
 }
 
-
-
 int **makeBorder(int **sudoku) {
     std::vector<std::vector<int>> borderArray((size*size)-minSize);
 
     std::vector<int> borderOptions;
+    std::vector<int> restrictions;
+
     int bCounter=0;
     int boxI=1;
     int boxJ=0;
@@ -101,7 +85,9 @@ int **makeBorder(int **sudoku) {
                 for (int j = 0; j < minSize; j++) {
                     int iT =  i+ boxI * minSize;
                     int jT = j + boxJ * minSize;
-                    borderOptions=getBorderOptions(iT,jT,sudoku);
+                    restrictions=getBorderRestrictions(iT, jT, sudoku);
+                    borderOptions=getAllowed(restrictions);
+
 
                     if (borderOptions.size() != 0) {
                         int ran = getRandomInt(borderOptions.size());
@@ -143,8 +129,7 @@ int **makeBorder(int **sudoku) {
                             iT=i+boxI*minSize;
                             jT=j+boxJ*minSize;
                             sudoku[iT][jT]=0;
-                            borderOptions=getBorderOptions(iT,jT,sudoku);
-                            borderOptions= vectorXwithoutVectorY(borderOptions,borderArray[bCounter]);
+                            borderOptions= getAllowed(borderArray[bCounter]);
                             if(borderOptions.size()!=0){
                                 int ran = getRandomInt(borderOptions.size());
                                 sudoku[iT][jT] = borderOptions.at(ran);
@@ -178,35 +163,61 @@ int **makeBorder(int **sudoku) {
 /*
  * Method to get possible integers for a slot in a border-box
  */
-std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
+std::vector<int> getBorderRestrictions(int row, int col, int **sudoku) {
     std::vector<int> restrictions;
     int boxRow,boxCol;
     boxRow=row/minSize;
     boxCol=col/minSize;
-    //adds the already used numbers from the row to the restrictions array
-    for (int i = 0; i < size; i++) {
-        if(i/minSize==boxRow)continue;
-        if (contains(restrictions, sudoku[row][i])==-1 && sudoku[row][i] != 0) {
-            restrictions.insert(restrictions.end(), sudoku[row][i]);
+    int temp;
+    if(row>col){
+        for(int i =boxRow*minSize-1;i>=0;i--){
+            temp=sudoku[i][col];
+            if(temp==0)break;
+            if(contains(restrictions,temp)==-1){
+                restrictions.insert(restrictions.end(),temp);
+            }
         }
-    }
-    //adds the already used numbers from the col to the restrictions array
-    for (int i = 0; i < size; i++) {
-        if(i/minSize==boxCol)continue;
-        if (contains(restrictions, sudoku[i][col])==-1 && sudoku[i][col] != 0) {
-            restrictions.insert(restrictions.cend(), sudoku[i][col]);
+        for(int i =boxCol*minSize+3;i<size;i++){
+            temp=sudoku[row][i];
+            if(temp==0)break;
+            if(contains(restrictions,temp)==-1){
+                restrictions.insert(restrictions.end(),temp);
+            }
         }
-    }
-    //adds the already used numbers of the same box to the restictions array
-
-    for (int i = 0 + minSize * boxRow; i < minSize + minSize * boxRow; i++) {
-        for (int j = 0 + minSize * boxCol; j < minSize + minSize * boxCol; j++) {
-            if (contains(restrictions, sudoku[i][j])==-1 && sudoku[i][j] != 0) {
-                restrictions.insert(restrictions.end(), sudoku[i][j]);
+    }else{
+        for(int i =boxRow*minSize+3;i<size;i++){
+            temp=sudoku[i][col];
+            if(temp==0)break;
+            if(contains(restrictions,temp)==-1){
+                restrictions.insert(restrictions.end(),temp);
+            }
+        }
+        for(int i =boxCol*minSize-1;i>=0;i--){
+            temp=sudoku[row][i];
+            if(temp==0)break;
+            if(contains(restrictions,temp)==-1){
+                restrictions.insert(restrictions.end(),temp);
             }
         }
     }
+    bool breakBool=false;
+    for (int i = 0 + minSize * boxRow; i < minSize + minSize * boxRow; i++) {
+        for (int j = 0 + minSize * boxCol; j < minSize + minSize * boxCol; j++) {
+            temp=sudoku[i][j];
+            if(temp==0) {
+                breakBool=true;
+                break;
+            }
+            if (contains(restrictions, temp)==-1 ) {
+                restrictions.insert(restrictions.end(), temp);
+            }
+        }
+        if(breakBool)break;
+    }
+    return restrictions;
+}
 
+std::vector<int> getAllowed(std::vector<int> restrictions){
     std::vector<int> allowed;
     for (int i = 1; i <= size; i++) {
         if (contains(restrictions, i)==-1) {
@@ -215,7 +226,6 @@ std::vector<int> getBorderOptions(int row, int col, int **sudoku) {
     }
     return allowed;
 }
-
 
 /*
  * Method to get a boolean depending on a comparison between array value and test-integer
@@ -280,5 +290,18 @@ void sudokuOut(int **sudoku) {
         std::cout << std::endl;
 
     }
+}
+
+
+void timeOut(std::string message){
+    // Get the current time
+    std::time_t currentTime = std::time(nullptr);
+
+    // Convert the time to a string format
+    char buffer[80];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime));
+
+    // Print the current time
+    std::cout << message << buffer << std::endl;
 }
 
